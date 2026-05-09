@@ -26,7 +26,7 @@ mysqli_begin_transaction($conn);
 $stockStmt = mysqli_prepare($conn, 'SELECT stock, precio FROM productos WHERE id = ? LIMIT 1 FOR UPDATE');
 mysqli_stmt_bind_param($stockStmt, 'i', $productoId);
 mysqli_stmt_execute($stockStmt);
-mysqli_stmt_bind_result($stockStmt, $stockActual, $precioUnitario);
+mysqli_stmt_bind_result($stockStmt, $stockActual, $precioConIva);
 $hasProduct = mysqli_stmt_fetch($stockStmt);
 mysqli_stmt_close($stockStmt);
 
@@ -44,10 +44,14 @@ if ((int) $stockActual < $cantidad) {
     exit;
 }
 
-$total = round(((float) $precioUnitario) * $cantidad, 2);
+$ivaRate = 0.19;
+$precioSinIva = round((float) $precioConIva / (1 + $ivaRate), 2);
+$subtotal = round($precioSinIva * $cantidad, 2);
+$iva = round($subtotal * $ivaRate, 2);
+$total = round(((float) $precioConIva) * $cantidad, 2);
 
-$stmt = mysqli_prepare($conn, 'INSERT INTO ventas (cliente_id, producto_id, cantidad, total) VALUES (?, ?, ?, ?)');
-mysqli_stmt_bind_param($stmt, 'iiid', $clienteId, $productoId, $cantidad, $total);
+$stmt = mysqli_prepare($conn, 'INSERT INTO ventas (cliente_id, producto_id, cantidad, subtotal, iva, total) VALUES (?, ?, ?, ?, ?, ?)');
+mysqli_stmt_bind_param($stmt, 'iiiddd', $clienteId, $productoId, $cantidad, $subtotal, $iva, $total);
 
 if (mysqli_stmt_execute($stmt)) {
     mysqli_stmt_close($stmt);

@@ -193,7 +193,8 @@ $usuarioIndicator = $sortKey === 'usuario' ? ($sortDirectionQuery === 'asc' ? '‚
     <script defer src="assets/js/ui.js"></script>
   </head>
   <body>
-    <div class="container panel">
+    <?php require_once __DIR__ . '/config/sidebar.php'; ?>
+
       <?php if ($flash) { ?>
       <div id="page-flash" class="alert alert-<?php echo htmlspecialchars($flash['type']); ?>" data-message="1">
         <strong>Notificacion</strong>
@@ -207,7 +208,6 @@ $usuarioIndicator = $sortKey === 'usuario' ? ($sortDirectionQuery === 'asc' ? '‚
           <h1>Gestion de Usuarios</h1>
           <p class="page-subtitle">Administra cuentas, contrase√±as y accesos desde aqui.</p>
         </div>
-        <a class="button-link secondary" data-loading-link href="dashboard.php"><span class="button-icon"><?php echo ui_icon('dashboard'); ?></span>Volver</a>
       </div>
 
       <form method="POST" class="crud-form" data-loading-form>
@@ -276,14 +276,15 @@ $usuarioIndicator = $sortKey === 'usuario' ? ($sortDirectionQuery === 'asc' ? '‚
           <?php } ?>
         </div>
       </div>
-    </div>
+    </main>
+  </div>
 
-    <div id="page-loader" class="page-loader" hidden>
-      <div class="loader-card">
-        <span class="loader-icon"><?php echo ui_icon('loading'); ?></span>
-        <strong>Cargando...</strong>
-        <span>Procesando la solicitud.</span>
-      </div>
+  <div id="page-loader" class="page-loader" hidden>
+    <div class="loader-card">
+      <span class="loader-icon"><?php echo ui_icon('loading'); ?></span>
+      <strong>Cargando...</strong>
+      <span>Procesando la solicitud.</span>
     </div>
+  </div>
   </body>
 </html>

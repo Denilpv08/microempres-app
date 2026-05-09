@@ -103,7 +103,7 @@ $flash = ui_flash_get();
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6"/><path d="M21 3 9 15"/></svg>
                     </span>
                     Ingresar
-                </button>
+                </button> 
             </form>
 
             <p class="auth-footer">&copy; <?php echo date('Y'); ?> Microempresa</p>

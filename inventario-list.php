@@ -178,7 +178,8 @@ $precioIndicator = $sortKey === 'precio' ? ($sortDirectionQuery === 'asc' ? '↑
     <script defer src="assets/js/ui.js"></script>
   </head>
   <body>
-    <div class="container panel">
+    <?php require_once __DIR__ . '/config/sidebar.php'; ?>
+
       <?php if ($flash) { ?>
       <div id="page-flash" class="alert alert-<?php echo htmlspecialchars($flash['type']); ?>" data-message="1">
         <strong>Notificacion</strong>
@@ -192,7 +193,6 @@ $precioIndicator = $sortKey === 'precio' ? ($sortDirectionQuery === 'asc' ? '↑
           <h1>Gestion de Inventario</h1>
           <p class="page-subtitle">Registra productos, modifica stock y controla precios desde un unico modulo.</p>
         </div>
-        <a class="button-link secondary" data-loading-link href="dashboard.php"><span class="button-icon"><?php echo ui_icon('dashboard'); ?></span>Volver</a>
       </div>
 
       <?php if ($isAdmin) { ?>
@@ -239,7 +239,7 @@ $precioIndicator = $sortKey === 'precio' ? ($sortDirectionQuery === 'asc' ? '↑
             <td><?php echo htmlspecialchars((string) $row['id']); ?></td>
             <td><?php echo htmlspecialchars($row['nombre']); ?></td>
             <td><?php echo htmlspecialchars((string) $row['stock']); ?></td>
-            <td><?php echo htmlspecialchars((string) $row['precio']); ?></td>
+            <td>$<?php echo number_format((float) $row['precio'], 2, '.', ','); ?></td>
             <td>
               <?php if ($isAdmin) { ?>
               <div class="table-actions">
@@ -273,14 +273,15 @@ $precioIndicator = $sortKey === 'precio' ? ($sortDirectionQuery === 'asc' ? '↑
           <?php } ?>
         </div>
       </div>
-    </div>
+    </main>
+  </div>
 
-    <div id="page-loader" class="page-loader" hidden>
-      <div class="loader-card">
-        <span class="loader-icon"><?php echo ui_icon('loading'); ?></span>
-        <strong>Cargando...</strong>
-        <span>Procesando la solicitud.</span>
-      </div>
+  <div id="page-loader" class="page-loader" hidden>
+    <div class="loader-card">
+      <span class="loader-icon"><?php echo ui_icon('loading'); ?></span>
+      <strong>Cargando...</strong>
+      <span>Procesando la solicitud.</span>
     </div>
+  </div>
   </body>
 </html>

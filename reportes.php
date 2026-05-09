@@ -1,6 +1,7 @@
 <?php
 require_once 'db.php';
 require_once __DIR__ . '/config/auth.php';
+require_once __DIR__ . '/config/ui.php';
 require_login();
 
 if (!isset($_SESSION['reportes_filtro_desde'])) {
@@ -36,6 +37,8 @@ $_SESSION['reportes_filtro_desde'] = $desde;
 $_SESSION['reportes_filtro_hasta'] = $hasta;
 
 $ventas = [];
+$montoSubtotal = 0.0;
+$montoIva = 0.0;
 $montoTotal = 0.0;
 $hayFiltroFecha = $desde !== '' || $hasta !== '';
 
@@ -45,6 +48,8 @@ $sql = '
     COALESCE(c.nombre, "Sin cliente") AS cliente,
     COALESCE(p.nombre, "Sin producto") AS producto,
     v.cantidad,
+    v.subtotal,
+    v.iva,
     v.total,
     v.fecha
   FROM ventas v
@@ -79,7 +84,7 @@ if ($stmt) {
   }
 
   mysqli_stmt_execute($stmt);
-  mysqli_stmt_bind_result($stmt, $id, $cliente, $producto, $cantidad, $total, $fecha);
+  mysqli_stmt_bind_result($stmt, $id, $cliente, $producto, $cantidad, $subtotal, $iva, $total, $fecha);
 
   while (mysqli_stmt_fetch($stmt)) {
     $ventas[] = [
@@ -87,13 +92,22 @@ if ($stmt) {
       'cliente' => $cliente,
       'producto' => $producto,
       'cantidad' => $cantidad,
+      'subtotal' => $subtotal,
+      'iva' => $iva,
       'total' => $total,
       'fecha' => $fecha,
     ];
+    $montoSubtotal += (float) $subtotal;
+    $montoIva += (float) $iva;
     $montoTotal += (float) $total;
   }
 
   mysqli_stmt_close($stmt);
+}
+
+function format_cop($amount): string
+{
+  return '$' . number_format($amount, 2, '.', ',');
 }
 ?>
 <!doctype html>
@@ -105,17 +119,14 @@ if ($stmt) {
     <link rel="stylesheet" href="assets/css/style.css" />
   </head>
   <body>
-    <div class="container panel">
+    <?php require_once __DIR__ . '/config/sidebar.php'; ?>
+
       <div class="page-header">
         <div>
           <p class="eyebrow">Resumen</p>
           <h1>Reportes</h1>
         </div>
-        <div class="view-actions">
-          <a class="button-link secondary" href="dashboard.php">Volver</a>
-        </div>
       </div>
-      
 
       <form class="list-filter" method="GET" action="reportes.php">
         <input type="date" name="desde" value="<?php echo htmlspecialchars($desde); ?>" />
@@ -126,8 +137,18 @@ if ($stmt) {
       <p class="helper-text">El filtro por fecha es opcional. Si no seleccionas fechas, se muestran todas las ventas.</p>
 
       <div class="report-summary">
-        <strong><?php echo $hayFiltroFecha ? 'Total filtrado:' : 'Total general:'; ?></strong>
-        <span>$<?php echo number_format($montoTotal, 2, '.', ','); ?></span>
+        <div>
+          <strong><?php echo $hayFiltroFecha ? 'Subtotal filtrado:' : 'Subtotal general:'; ?></strong>
+          <span><?php echo format_cop($montoSubtotal); ?></span>
+        </div>
+        <div>
+          <strong>IVA 19%:</strong>
+          <span><?php echo format_cop($montoIva); ?></span>
+        </div>
+        <div>
+          <strong><?php echo $hayFiltroFecha ? 'Total filtrado:' : 'Total general:'; ?></strong>
+          <span><?php echo format_cop($montoTotal); ?></span>
+        </div>
       </div>
 
       <?php if (count($ventas) > 0) { ?>
@@ -138,6 +159,8 @@ if ($stmt) {
           <th>Cliente</th>
           <th>Producto</th>
           <th>Cantidad</th>
+          <th>Subtotal</th>
+          <th>IVA 19%</th>
           <th>Total</th>
           <th>Fecha</th>
         </tr>
@@ -147,7 +170,9 @@ if ($stmt) {
           <td><?php echo htmlspecialchars($venta['cliente']); ?></td>
           <td><?php echo htmlspecialchars($venta['producto']); ?></td>
           <td><?php echo htmlspecialchars((string) $venta['cantidad']); ?></td>
-          <td>$<?php echo number_format((float) $venta['total'], 2, '.', ','); ?></td>
+          <td><?php echo format_cop((float) $venta['subtotal']); ?></td>
+          <td><?php echo format_cop((float) $venta['iva']); ?></td>
+          <td><?php echo format_cop((float) $venta['total']); ?></td>
           <td><?php echo htmlspecialchars((string) $venta['fecha']); ?></td>
         </tr>
         <?php } ?>
@@ -156,6 +181,16 @@ if ($stmt) {
       <?php } else { ?>
       <p class="status-empty">No hay ventas registradas para mostrar en reportes.</p>
       <?php } ?>
+
+    </main>
+  </div>
+
+    <div id="page-loader" class="page-loader" hidden>
+      <div class="loader-card">
+        <span class="loader-icon"><?php echo ui_icon('loading'); ?></span>
+        <strong>Cargando...</strong>
+        <span>Procesando la solicitud.</span>
+      </div>
     </div>
   </body>
 </html>
