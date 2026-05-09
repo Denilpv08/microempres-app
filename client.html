@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clientes</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body>
+    <div class="container panel">
+      <p class="eyebrow">Modulo de clientes</p>
+      <h1>Registro de Clientes</h1>
+
+      <form action="clientes.php" method="POST">
+        <input type="text" name="nombre" placeholder="Nombre" required />
+
+        <input type="text" name="telefono" placeholder="Telefono" />
+
+        <input type="email" name="correo" placeholder="Correo" />
+
+        <button type="submit">Guardar</button>
+      </form>
+
+      <div class="view-actions">
+        <a class="button-link" href="clientes-list.php">Ver listado</a>
+        <a class="button-link secondary" href="dashboard.html">Volver</a>
+      </div>
+    </div>
+  </body>
+</html>

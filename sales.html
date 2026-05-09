@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ventas</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body>
+    <div class="container panel">
+      <p class="eyebrow">Modulo de ventas</p>
+      <h1>Registro de Ventas</h1>
+
+      <form action="php.php" method="POST">
+        <input type="text" name="cliente" placeholder="Cliente" required />
+
+        <input type="text" name="producto" placeholder="Producto" required />
+
+        <input
+          type="number"
+          name="cantidad"
+          placeholder="Cantidad"
+          min="1"
+          required
+        />
+
+        <input
+          type="number"
+          name="total"
+          placeholder="Total"
+          min="0"
+          step="0.01"
+          required
+        />
+
+        <button type="submit">Guardar Venta</button>
+      </form>
+
+      <div class="view-actions">
+        <a class="button-link secondary" href="dashboard.html">Volver</a>
+      </div>
+    </div>
+  </body>
+</html>
