@@ -1,7 +1,10 @@
 <?php
 require_once 'db.php';
 require_once __DIR__ . '/config/auth.php';
+require_once __DIR__ . '/config/ui.php';
 require_login();
+
+$flash = ui_flash_get();
 
 $clientes = [];
 $result = mysqli_query($conn, 'SELECT id, nombre FROM clientes ORDER BY nombre ASC');
@@ -28,9 +31,17 @@ $canSave = count($clientes) > 0 && count($productos) > 0;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ventas</title>
     <link rel="stylesheet" href="assets/css/style.css" />
+    <script defer src="assets/js/ui.js"></script>
   </head>
   <body>
     <div class="container panel">
+      <?php if ($flash) { ?>
+      <div id="page-flash" class="alert alert-<?php echo htmlspecialchars($flash['type']); ?>" data-message="1">
+        <strong>Notificación</strong>
+        <p><?php echo htmlspecialchars($flash['message']); ?></p>
+      </div>
+      <?php } ?>
+
       <div class="page-header">
         <div>
           <p class="eyebrow">Modulo de ventas</p>
@@ -41,7 +52,7 @@ $canSave = count($clientes) > 0 && count($productos) > 0;
           <a class="button-link secondary" href="dashboard.php">Volver</a>
         </div>
       </div>
-      <form action="php.php" method="POST">
+      <form action="php.php" method="POST" data-loading-form>
         <select name="cliente_id" required>
           <option value="">Selecciona un cliente</option>
           <?php foreach ($clientes as $cliente) { ?>
@@ -71,6 +82,14 @@ $canSave = count($clientes) > 0 && count($productos) > 0;
       <?php } ?>
 
       
+    </div>
+
+    <div id="page-loader" class="page-loader" hidden>
+      <div class="loader-card">
+        <span class="loader-icon"><?php echo ui_icon('loading'); ?></span>
+        <strong>Cargando...</strong>
+        <span>Procesando la solicitud.</span>
+      </div>
     </div>
 
     <script>
