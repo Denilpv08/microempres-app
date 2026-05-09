@@ -19,6 +19,10 @@ Sistema web PHP para gestión de clientes, inventario, ventas, usuarios y report
 
 php -S localhost:8000
 
+## Ruta local del proyecto
+
+[localhost:8000](http://localhost:8000/login.php)
+
 ## Módulos
 
 | Archivo                 | Descripción                       |
